@@ -3,9 +3,10 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.002';
+$HiveJSO::VERSION = '0.003';
 use Moo;
 use JSON::MaybeXS;
+use HiveJSO::Error;
 
 has did => (
   is => 'ro',
@@ -69,7 +70,17 @@ sub _parse {
   if ($string =~ /^([^{]*)({[^}]+})(.*)$/) {
     my ( $pre, $obj, $post ) = ( $1, $2, $3 );
     push @results, $pre if $pre && length($pre);
-    push @results, $class->new_via_json($obj);
+    my $object;
+    eval {
+      $object = $class->new_via_json($obj);
+    };
+    if ($@) {
+      $object = HiveJSO::Error->new(
+        garbage => $obj,
+        error => $@,
+      );
+    }
+    push @results, $object;
     push @results, ( $one ? $post : $class->parse($post) ) if $post && length($post);
   } else {
     push @results, $string;
@@ -89,7 +100,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 

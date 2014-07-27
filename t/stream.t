@@ -99,5 +99,16 @@ use HiveJSO;
   ok(!$obj2->has_error_code,'has no error_code');
 }
 
+{
+  my $stream = '7890,"ok":1}{"did":12345::::67890,""""ok":1}{"did":123456';
+  my @result = HiveJSO->parse($stream);
+  is(scalar @result,3,'correct amount of results');
+  my ( $pre, $obj, $post ) = @result;
+  is($pre,'7890,"ok":1}','Garbage before object');
+  isa_ok($obj,'HiveJSO::Error','object');
+  is($obj->garbage,'{"did":12345::::67890,""""ok":1}','Garbage is ok in error');
+  is($post,'{"did":123456','Garbage after object');
+}
+
 done_testing;
 

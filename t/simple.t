@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Test::More;
 use HiveJSO;
+use JSON::MaybeXS;
 
 {
   my $json = '{"did":1234567890,"ok":1}';
