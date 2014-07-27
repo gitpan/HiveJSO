@@ -3,8 +3,15 @@ Changes from 1740-10-12 00:00:00 +0000 to present.
 ==================================================
 
 ------------------------------------------
-version 0.001 at 2014-07-27 20:20:06 +0000
+version 0.002 at 2014-07-27 21:38:48 +0000
 ------------------------------------------
+
+  Change: f0ce039a9af5b6d7e416d6831abb48e37882a896
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-07-27 23:38:19 +0000
+
+    Added more parser functions for easier integration into streaming
+    concepts 
 
   Change: 4cb406ddd1286143413f271e6b84e5087b2738d3
   Author: Torsten Raudssus <torsten@raudss.us>

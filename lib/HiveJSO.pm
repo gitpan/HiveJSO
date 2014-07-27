@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.001';
+$HiveJSO::VERSION = '0.002';
 use Moo;
 use JSON::MaybeXS;
 
@@ -38,12 +38,39 @@ sub new_via_json {
 
 sub parse {
   my ( $class, $string ) = @_;
+  return $class->_parse(0,$string);
+}
+
+sub parse_one {
+  my ( $class, $string ) = @_;
+  return $class->_parse(1,$string);
+}
+
+sub parse_seek {
+  my ( $class, $string ) = @_;
+  my @parsed = $class->parse_one($string);
+  my ( $obj, $post );
+  if (ref $parsed[0]) {
+    $obj = shift @parsed;
+    $post = shift @parsed;
+  } elsif (scalar @parsed == 1) {
+    $post = shift @parsed;
+  } else {
+    shift @parsed;
+    $obj = shift @parsed;
+    $post = shift @parsed;
+  }
+  return ( $obj, $post );
+}
+
+sub _parse {
+  my ( $class, $one, $string ) = @_;
   my @results;
   if ($string =~ /^([^{]*)({[^}]+})(.*)$/) {
     my ( $pre, $obj, $post ) = ( $1, $2, $3 );
     push @results, $pre if $pre && length($pre);
     push @results, $class->new_via_json($obj);
-    push @results, $class->parse($post) if $post && length($post);
+    push @results, ( $one ? $post : $class->parse($post) ) if $post && length($post);
   } else {
     push @results, $string;
   }
@@ -62,15 +89,25 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
   my @results = HiveJSO->parse($streambuffer);
 
+  my ( $obj, $post ) = HiveJSO->parse_seek($streambuffer);
+
 =head1 DESCRIPTION
 
 See L<https://github.com/homehivelab/hive-jso> for now.
+
+=head1 METHODS
+
+=head2 parse
+
+=head2 parse_one
+
+=head2 parse_seek
 
 =head1 SUPPORT
 
