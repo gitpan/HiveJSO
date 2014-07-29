@@ -3,10 +3,11 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.003';
+$HiveJSO::VERSION = '0.004';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
+use Digest::CRC qw( crc32 );
 
 has did => (
   is => 'ro',
@@ -15,19 +16,29 @@ has did => (
 
 our @attributes = qw(
   device_id
-  software_id
+  software
   ok
   timestamp
-  timestmap_timezone
+  timestamp_timezone
   data
   info
+  status
+  config
   error
   error_code
   device
-  sources
+  device_web
+  device_timestamp
+  manufacturer
+  manufacturer_web
+  manufacturer_factory
+  manufacturer_country
+  supports
+  ranges
+  units
 );
 
-has [@attributes] => (
+has [@attributes,'checksum'] => (
   is => 'ro',
   predicate => 1,
 );
@@ -35,6 +46,69 @@ has [@attributes] => (
 sub new_via_json {
   my ( $class, $json ) = @_;
   return $class->new(decode_json($json));
+}
+
+has hivejso => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_hivejso {
+  my ( $self ) = @_;
+  return encode_json($self->hivejso_data);
+}
+
+has hivejso_data => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_hivejso_data {
+  my ( $self ) = @_;
+  return {
+    did => $self->did,
+    (map {
+      $self->can('has_'.$_)->($self) ? ( $_ => $self->$_ ) : ()
+    } @attributes),
+  };
+}
+
+has checksum_ok => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_checksum_ok {
+  my ( $self ) = @_;
+  return $self->has_checksum
+    ? $self->checksum eq $self->hivejso_checksum
+      ? 1
+      : 0
+    : 1;
+}
+
+has hivejso_checksum => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_hivejso_checksum {
+  my ( $self ) = @_;
+  my %obj = %{$self->hivejso_data};
+  my $crc_string = join(',',map {
+    $_, $self->_get_value_checksum($obj{$_})
+  } sort { $a cmp $b } grep { $_ ne 'checksum' } keys %obj);
+  return crc32($crc_string);
+}
+
+sub _get_value_checksum {
+  my ( $self, $value ) = @_;
+  if (ref $value eq 'ARRAY') {
+    return '['.join(',',map {
+      $self->_get_value_checksum($_)
+    } @{$value}).']';
+  }
+  return '"'.$value.'"';
 }
 
 sub parse {
@@ -100,7 +174,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 

@@ -14,12 +14,13 @@ meta-spec:
   version: '1.4'
 name: HiveJSO
 requires:
+  Digest::CRC: '0'
   JSON::MaybeXS: '0'
   Moo: '0'
 resources:
   homepage: https://github.com/homehivelab/p5-hivejso
   repository: https://github.com/homehivelab/p5-hivejso.git
-version: '0.003'
+version: '0.004'
 x_Dist_Zilla:
   perl:
     version: '5.018001'

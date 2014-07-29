@@ -10,6 +10,7 @@ cpanfile
 dist.ini
 lib/HiveJSO.pm
 lib/HiveJSO/Error.pm
+t/checksum.t
 t/load.t
 t/release-pod-syntax.t
 t/simple.t

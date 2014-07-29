@@ -26,6 +26,7 @@
       },
       "runtime" : {
          "requires" : {
+            "Digest::CRC" : "0",
             "JSON::MaybeXS" : "0",
             "Moo" : "0"
          }
@@ -45,7 +46,7 @@
          "web" : "https://github.com/homehivelab/p5-hivejso"
       }
    },
-   "version" : "0.003",
+   "version" : "0.004",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"

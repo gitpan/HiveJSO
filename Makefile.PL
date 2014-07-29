@@ -21,13 +21,14 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "HiveJSO",
   "PREREQ_PM" => {
+    "Digest::CRC" => 0,
     "JSON::MaybeXS" => 0,
     "Moo" => 0
   },
   "TEST_REQUIRES" => {
     "Test::More" => "0.96"
   },
-  "VERSION" => "0.003",
+  "VERSION" => "0.004",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -35,6 +36,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "Digest::CRC" => 0,
   "JSON::MaybeXS" => 0,
   "Moo" => 0,
   "Test::More" => "0.96"
