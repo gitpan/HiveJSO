@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.004';
+$HiveJSO::VERSION = '0.005';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -141,7 +141,7 @@ sub parse_seek {
 sub _parse {
   my ( $class, $one, $string ) = @_;
   my @results;
-  if ($string =~ /^([^{]*)({[^}]+})(.*)$/) {
+  if ($string =~ /^([^{]*)({[^}]+})(.*)/) {
     my ( $pre, $obj, $post ) = ( $1, $2, $3 );
     push @results, $pre if $pre && length($pre);
     my $object;
@@ -174,13 +174,22 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SYNOPSIS
 
-  my @results = HiveJSO->parse($streambuffer);
+  my @results = HiveJSO->parse($string);
 
-  my ( $obj, $post ) = HiveJSO->parse_seek($streambuffer);
+  my ( $obj, $post ) = HiveJSO->parse_seek($buffer);
+  if ($obj) {
+    $buffer = $post; # leave unparsed data in buffer
+    do_something($obj); # do something with the HiveJSO
+    # now refeed $buffer, could deliver another object
+    # as parse_seek always just seeks the first result
+    # the rest stays in $post
+  } else {
+    # no complete object in buffer yet, need more
+  }
 
 =head1 DESCRIPTION
 
@@ -189,6 +198,10 @@ See L<https://github.com/homehivelab/hive-jso> for now.
 =head1 METHODS
 
 =head2 parse
+
+Gets out all L<HiveJSO> objects from a string. The returned array also
+contains, if exist, the text before and after the objects as part of the
+array as not blessed scalars.
 
 =head2 parse_one
 
@@ -207,7 +220,7 @@ Repository
 
 Issue Tracker
 
-  http://github.com/homehivelab/p5-hivejso
+  http://github.com/homehivelab/p5-hivejso/issues
 
 =head1 AUTHOR
 

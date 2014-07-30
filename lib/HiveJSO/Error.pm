@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::Error::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Error for malformed objects
-$HiveJSO::Error::VERSION = '0.004';
+$HiveJSO::Error::VERSION = '0.005';
 use Moo;
 
 has garbage => (
@@ -28,7 +28,7 @@ HiveJSO::Error - HiveJSO Error for malformed objects
 
 =head1 VERSION
 
-version 0.004
+version 0.005
 
 =head1 SUPPORT
 
@@ -43,7 +43,7 @@ Repository
 
 Issue Tracker
 
-  http://github.com/homehivelab/p5-hivejso
+  http://github.com/homehivelab/p5-hivejso/issues
 
 =head1 AUTHOR
 
