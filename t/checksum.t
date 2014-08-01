@@ -10,12 +10,12 @@ use HiveJSO;
   my $obj = HiveJSO->new_via_json($json);
 
   isa_ok($obj,'HiveJSO','object');
-  is($obj->hivejso_checksum,"3014000316",'Proper generated checksum');
+  is($obj->hivejso_checksum,"3689190051",'Proper generated checksum');
   ok(!$obj->has_checksum,'Object has no checksum');
 }
 
 {
-  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3014000316}';
+  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3689190051}';
 
   my $obj = HiveJSO->new_via_json($json);
 
@@ -24,7 +24,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"u":1234567890,"ok":1,"c":30092052}';
+  my $json = '{"u":1234567890,"ok":1,"c":3170579149}';
 
   my $obj = HiveJSO->new_via_json($json);
 
@@ -43,7 +43,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"u":4321,"d":[[1,100],[2,200]],"c":3388202689}';
+  my $json = '{"u":4321,"d":[[1,100],[2,200]],"c":1874590478}';
 
   my $obj = HiveJSO->new_via_json($json);
 

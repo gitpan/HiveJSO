@@ -34,12 +34,12 @@ use JSON::MaybeXS;
   is_deeply(decode_json($obj->hivejso_short),{
     ok => 1,
     u => 1234567890,
-    c => 30092052,
+    c => 3170579149,
   },'Short HiveJSO is fine');
   is_deeply(decode_json($obj->hivejso),{
     ok => 1,
     unit_id => 1234567890,
-    checksum => 3014000316,
+    checksum => 3689190051,
   },'HiveJSO is fine');
 }
 

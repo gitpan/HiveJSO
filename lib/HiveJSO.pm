@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.007';
+$HiveJSO::VERSION = '0.008';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -153,7 +153,7 @@ sub BUILDARGS {
 sub calc_checksum {
   my ( $class, %obj ) = @_;
   my $checksum_string = join(',',map {
-    $_, $class->_get_value_checksum($obj{$_})
+    '"'.$_.'"', $class->_get_value_checksum($obj{$_})
   } sort { $a cmp $b } grep {
     $_ ne 'checksum' && $_ ne 'c'
   } keys %obj);
@@ -367,7 +367,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 

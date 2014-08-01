@@ -26,7 +26,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3014000316}';
+  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3689190051}';
 
   my $orig = HiveJSO->new_via_json($json);
   my $obj = $orig->add_short(
@@ -38,6 +38,7 @@ use HiveJSO;
   ok($orig->has_checksum,'orig has checksum');
   isnt($obj,$orig,'object from add is not the original one');
   ok($obj->has_checksum,'new obj has checksum');
+  is($obj->checksum,'2315007736','new obj checksum is correct');
   is($obj->unit_id,1234567890,'Proper Unit ID');
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
