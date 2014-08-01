@@ -5,32 +5,50 @@ use Test::More;
 use HiveJSO;
 
 {
-  my $json = '{"did":1234567890,"ok":1,"data":[["tsl250",141]]}';
+  my $json = '{"unit_id":1234567890,"ok":1}';
 
   my $obj = HiveJSO->new_via_json($json);
 
   isa_ok($obj,'HiveJSO','object');
-  is($obj->hivejso_checksum,"3744640343",'Proper generated checksum');
-  ok($obj->checksum_ok,'Object is valid');
+  is($obj->hivejso_checksum,"3014000316",'Proper generated checksum');
+  ok(!$obj->has_checksum,'Object has no checksum');
 }
 
 {
-  my $json = '{"did":1234567890,"ok":1,"data":[["tsl250",141]],"checksum":3744640343}';
+  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3014000316}';
 
   my $obj = HiveJSO->new_via_json($json);
 
   isa_ok($obj,'HiveJSO','object');
-  is($obj->hivejso_checksum,"3744640343",'Proper generated checksum');
-  ok($obj->checksum_ok,'Object is valid');
+  ok($obj->has_checksum,'Object has checksum');
 }
 
 {
-  my $json = '{"did":1234567890,"ok":1,"data":[["tsl250",141]],"checksum":1234}';
+  my $json = '{"u":1234567890,"ok":1,"c":30092052}';
 
   my $obj = HiveJSO->new_via_json($json);
 
   isa_ok($obj,'HiveJSO','object');
-  ok(!$obj->checksum_ok,'Object is not valid');
+  ok($obj->has_checksum,'Object has checksum');
+}
+
+{
+  my $json = '{"u":1234567890,"ok":1,"c":1234}';
+
+  eval {
+    HiveJSO->new_via_json($json);
+  };
+
+  like($@,qr/invalid HiveJSO checksum/,'Checksum error is coming up');
+}
+
+{
+  my $json = '{"u":4321,"d":[[1,100],[2,200]],"c":3388202689}';
+
+  my $obj = HiveJSO->new_via_json($json);
+
+  isa_ok($obj,'HiveJSO','object');
+  ok($obj->has_checksum,'Object has checksum');
 }
 
 done_testing;

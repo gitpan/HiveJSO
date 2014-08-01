@@ -1,10 +1,41 @@
 ==================================================
-Changes from 1740-10-15 00:00:00 +0000 to present.
+Changes from 1740-10-17 00:00:00 +0000 to present.
 ==================================================
 
 ------------------------------------------
-version 0.005 at 2014-07-30 19:55:53 +0000
+version 0.006 at 2014-08-01 00:27:44 +0000
 ------------------------------------------
+
+  Change: 6f74c19c346d5a2084ac84d15fc6987b160f0bf8
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-08-01 02:25:36 +0000
+
+    Added add function <pun> 
+
+  Change: 08ce60b99052673ff9de6dfad85050117df1d137
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-08-01 01:35:04 +0000
+
+    Added data validation and novell check 
+
+  Change: 4d2042f71fadb7271c610f52983e6af97d10f03b
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-08-01 00:53:58 +0000
+
+    More validation, new organization, new format, more tests 
+
+  Change: 2ba7ea5dbbb1f23ea317f5bed5513a79f9445b99
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-07-31 01:43:50 +0000
+
+    Switched from regexp parsing to index/substr based parsing for
+    handling REAL garbage 
+
+  Change: 9017ae1ab5d33090e3b8a21678684fcb0dd81174
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-07-31 00:32:23 +0000
+
+    Another tuning to avoid object lose on packets without ending 
 
   Change: 2d8e37250e9d929ecdcfec9ed1bf1439834cbc5d
   Author: Torsten Raudssus <torsten@raudss.us>

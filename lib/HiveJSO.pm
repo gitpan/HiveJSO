@@ -3,49 +3,161 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.005';
+$HiveJSO::VERSION = '0.006';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
 use Digest::CRC qw( crc32 );
+use Carp qw( croak );
 
-has did => (
-  is => 'ro',
-  required => 1,
+our %short_attributes = qw(
+  c    checksum
+  d    data
+  ma   manufacturer
+  maw  manufacturer_web
+  maf  manufacturer_factory
+  mac  manufacturer_country
+  n    units
+  o    command
+  p    product_id
+  pr   product
+  prw  product_web
+  prt  product_timestamp
+  q    supports
+  r    ranges
+  s    sources
+  t    timestamp
+  tz   timestamp_timezone
+  u    unit_id
+  w    software
+  x    error_code
+  xt   error
 );
 
-our @attributes = qw(
-  device_id
-  software
+our @long_attributes = qw(
   ok
-  timestamp
-  timestamp_timezone
-  data
-  info
-  status
-  config
-  error
-  error_code
-  device
-  device_web
-  device_timestamp
-  manufacturer
-  manufacturer_web
-  manufacturer_factory
-  manufacturer_country
-  supports
-  ranges
-  units
+  path
 );
 
-has [@attributes,'checksum'] => (
+our @attributes = sort {
+  $a cmp $b
+} ( @long_attributes, values %short_attributes );
+
+has [grep { $_ ne 'unit_id' } @attributes] => (
   is => 'ro',
   predicate => 1,
+);
+
+has unit_id => (
+  is => 'ro',
+  required => 1,
 );
 
 sub new_via_json {
   my ( $class, $json ) = @_;
   return $class->new(decode_json($json));
+}
+
+sub BUILDARGS {
+  my ( $class, @args ) = @_;
+  my %orig;
+  if (scalar @args == 1) {
+    %orig = %{$args[0]};
+  } else {
+    %orig = @args;
+  }
+  my %attr;
+
+  #
+  # only accept allowed attributes
+  # only accept short or long not mixed
+  #
+  my ( $short, $long );
+  my $short_long_error = __PACKAGE__." you can't mix short HiveJSO attribute names with long HiveJSO attributes";
+  for my $k (keys %orig) {
+    if (defined $short_attributes{$k}) {
+      croak $short_long_error if $long; $short = 1;
+      $attr{$short_attributes{$k}} = $orig{$k};
+    } elsif (grep {
+      $k eq $short_attributes{$_}
+    } keys %short_attributes) {
+      croak $short_long_error if $short; $long = 1;
+      $attr{$k} = $orig{$k};      
+    } elsif (grep { $_ eq $k } @long_attributes) {
+      $attr{$k} = $orig{$k};
+    } else {
+      croak __PACKAGE__." '".$k."' is not a valid HiveJSO attribute";
+    }
+  }
+
+  #
+  # remove checksum now of input attributes
+  #
+  my $checksum = delete $orig{c} || delete $orig{checksum};
+
+  #
+  # we need at least 2 attributes without checksum (unit_id and one other)
+  #
+  if (keys %orig < 2) {
+    croak __PACKAGE__." we need more attributes for a valid HiveJSO";
+  }
+
+  #
+  # ok must be 1
+  #
+  if (defined $attr{ok} && $attr{ok} != 1) {
+    croak __PACKAGE__." ok attribute must be set to 1 for a valid HiveJSO";
+  }
+
+  #
+  # data attribute validation
+  #
+  if (defined $attr{data}) {
+    croak __PACKAGE__." 'data' must be an array" unless ref $attr{data} eq 'ARRAY';
+    for my $data_set (@{$attr{data}}) {
+      croak __PACKAGE__." values inside the 'data' array must be arrays" unless ref $data_set eq 'ARRAY';
+      croak __PACKAGE__." array inside 'data' array needs at least one value" unless scalar @{$data_set};
+      croak __PACKAGE__." first value in array inside 'data' array must be positive integer above 0" unless $data_set->[0] > 0;
+    }
+  }
+
+  #
+  # novell check
+  #
+  if (defined $attr{error_code}) {
+    croak __PACKAGE__." error_code must be positive integer above 0" unless $attr{error_code} > 0;
+  }
+
+  #
+  # checksum check result is just an attribute, doesn't lead to failure
+  #
+  if ($checksum) {
+    my $calced_checksum = $class->calc_checksum(%orig);
+    unless($calced_checksum == $checksum) {
+      croak __PACKAGE__." invalid HiveJSO checksum, should be '".$calced_checksum."'";
+    };
+  }
+  return { %attr };
+}
+
+sub calc_checksum {
+  my ( $class, %obj ) = @_;
+  my $checksum_string = join(',',map {
+    $_, $class->_get_value_checksum($obj{$_})
+  } sort { $a cmp $b } grep {
+    $_ ne 'checksum' && $_ ne 'c'
+  } keys %obj);
+  return crc32($checksum_string);
+}
+
+sub _get_value_checksum {
+  my ( $class, $value ) = @_;
+  if (ref $value eq 'ARRAY') {
+    return '['.join(',',map {
+      $class->_get_value_checksum($_)
+    } @{$value}).']';
+  }
+  return '"'.$value.'"';
 }
 
 has hivejso => (
@@ -55,7 +167,23 @@ has hivejso => (
 
 sub _build_hivejso {
   my ( $self ) = @_;
-  return encode_json($self->hivejso_data);
+  return encode_json({
+    %{$self->hivejso_data},
+    checksum => $self->hivejso_checksum,
+  });
+}
+
+has hivejso_short => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_hivejso_short {
+  my ( $self ) = @_;
+  return encode_json({
+    %{$self->hivejso_data_short},
+    c => $self->hivejso_checksum_short,
+  });
 }
 
 has hivejso_data => (
@@ -66,25 +194,36 @@ has hivejso_data => (
 sub _build_hivejso_data {
   my ( $self ) = @_;
   return {
-    did => $self->did,
+    unit_id => $self->unit_id,
     (map {
       $self->can('has_'.$_)->($self) ? ( $_ => $self->$_ ) : ()
+    } grep {
+      $_ ne 'unit_id' && $_ ne 'checksum' && $_ ne 'c'
     } @attributes),
   };
 }
 
-has checksum_ok => (
+has hivejso_data_short => (
   is => 'lazy',
   init_arg => undef,
 );
 
-sub _build_checksum_ok {
+sub _build_hivejso_data_short {
   my ( $self ) = @_;
-  return $self->has_checksum
-    ? $self->checksum eq $self->hivejso_checksum
-      ? 1
-      : 0
-    : 1;
+  my %short_data = (
+    u => $self->unit_id,
+    (map {
+      $self->can('has_'.$_)->($self) ? ( $_ => $self->$_ ) : ()
+    } grep {
+      $_ ne 'unit_id' && $_ ne 'checksum' && $_ ne 'c'
+    } @attributes),
+  );
+  for my $k (keys %short_attributes) {
+    if ($short_data{$short_attributes{$k}}) {
+      $short_data{$k} = delete $short_data{$short_attributes{$k}};
+    }
+  }
+  return { %short_data };
 }
 
 has hivejso_checksum => (
@@ -94,21 +233,17 @@ has hivejso_checksum => (
 
 sub _build_hivejso_checksum {
   my ( $self ) = @_;
-  my %obj = %{$self->hivejso_data};
-  my $crc_string = join(',',map {
-    $_, $self->_get_value_checksum($obj{$_})
-  } sort { $a cmp $b } grep { $_ ne 'checksum' } keys %obj);
-  return crc32($crc_string);
+  return $self->calc_checksum(%{$self->hivejso_data});
 }
 
-sub _get_value_checksum {
-  my ( $self, $value ) = @_;
-  if (ref $value eq 'ARRAY') {
-    return '['.join(',',map {
-      $self->_get_value_checksum($_)
-    } @{$value}).']';
-  }
-  return '"'.$value.'"';
+has hivejso_checksum_short => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_hivejso_checksum_short {
+  my ( $self ) = @_;
+  return $self->calc_checksum(%{$self->hivejso_data_short});
 }
 
 sub parse {
@@ -138,11 +273,35 @@ sub parse_seek {
   return ( $obj, $post );
 }
 
+sub _parse_first {
+  my ( $class, $string, $current ) = @_;
+  my $start = defined $current
+    ? index($string,'{',$current)
+    : index($string,'{');
+  return if $start == -1;
+  my $end = index($string,'}',$start);
+  return if $end == -1;
+  my $test = substr($string,$start,$end-$start+1);
+  my $another_start = index($test,'{',1);
+  if ($another_start == -1) {
+    my @result = (
+      $start == 0 ? "" : substr($string,0,$start),
+      substr($string,$start,$end-$start+1),
+      substr($string,$end+1),
+    );
+    return @result;
+  } else {
+    return if defined $current && $another_start == $current; # TODO
+    return $class->_parse_first($string,$another_start);
+  }
+}
+
 sub _parse {
   my ( $class, $one, $string ) = @_;
   my @results;
-  if ($string =~ /^([^{]*)({[^}]+})(.*)/) {
-    my ( $pre, $obj, $post ) = ( $1, $2, $3 );
+  my @parse_first = $class->_parse_first($string);
+  if (@parse_first) {
+    my ( $pre, $obj, $post ) = @parse_first;
     push @results, $pre if $pre && length($pre);
     my $object;
     eval {
@@ -162,6 +321,30 @@ sub _parse {
   return @results;
 }
 
+sub add {
+  my ( $self, %newattr ) = @_;
+  my %newobj = (
+    %{$self->hivejso_data},
+    %newattr,
+  );
+  return $self->new(
+    %newobj,
+    $self->has_checksum ? ( checksum => $self->calc_checksum(%newobj) ) : (),
+  );
+}
+
+sub add_short {
+  my ( $self, %newattr ) = @_;
+  my %newobj = (
+    %{$self->hivejso_data_short},
+    %newattr,
+  );
+  return $self->new(
+    %newobj,
+    $self->has_checksum ? ( c => $self->calc_checksum(%newobj) ) : (),
+  );
+}
+
 1;
 
 __END__
@@ -174,7 +357,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -190,6 +373,11 @@ version 0.005
   } else {
     # no complete object in buffer yet, need more
   }
+
+  my $new_obj = $obj->add(
+    timestamp => 1406479539,
+    timestamp_timezone => 120,
+  );
 
 =head1 DESCRIPTION
 
