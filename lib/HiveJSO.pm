@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.006';
+$HiveJSO::VERSION = '0.007';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -55,8 +55,14 @@ has unit_id => (
 
 sub new_via_json {
   my ( $class, $json ) = @_;
-  return $class->new(decode_json($json));
+  my %obj = %{decode_json($json)};
+  return $class->new( %obj, original_json => $json );
 }
+
+has original_json => (
+  is => 'ro',
+  predicate => 1,
+);
 
 sub BUILDARGS {
   my ( $class, @args ) = @_;
@@ -86,7 +92,11 @@ sub BUILDARGS {
     } elsif (grep { $_ eq $k } @long_attributes) {
       $attr{$k} = $orig{$k};
     } else {
-      croak __PACKAGE__." '".$k."' is not a valid HiveJSO attribute";
+      if ($k eq 'original_json') {
+        $attr{$k} = $orig{$k}; delete $orig{$k};
+      } else {
+        croak __PACKAGE__." '".$k."' is not a valid HiveJSO attribute";
+      }
     }
   }
 
@@ -357,7 +367,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
