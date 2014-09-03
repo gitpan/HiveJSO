@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.009';
+$HiveJSO::VERSION = '0.010';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -393,7 +393,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.009
+version 0.010
 
 =head1 SYNOPSIS
 

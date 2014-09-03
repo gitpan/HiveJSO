@@ -46,7 +46,7 @@
          "web" : "https://github.com/homehivelab/p5-hivejso"
       }
    },
-   "version" : "0.009",
+   "version" : "0.010",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"
@@ -365,7 +365,7 @@
                "Dist::Zilla::Plugin::Git::Tag" : {
                   "branch" : null,
                   "signed" : 0,
-                  "tag" : "0.009",
+                  "tag" : "0.010",
                   "tag_format" : "%v",
                   "tag_message" : "v%v",
                   "time_zone" : "local"
