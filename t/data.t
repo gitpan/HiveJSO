@@ -5,7 +5,7 @@ use Test::More;
 use HiveJSO;
 
 {
-  my $json = '{"unit_id":1234567890,"data":[[1,1],[2,2]]}';
+  my $json = '{"unit":"202481588441972/1","data":[[1,1],[2,2]]}';
 
   my $obj = HiveJSO->new_via_json($json);
 
@@ -18,7 +18,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit_id":1234567890,"data":[[0,1]]}';
+  my $json = '{"unit":"202481588441972/1","data":[[0,1]]}';
 
   eval {
     HiveJSO->new_via_json($json);
@@ -28,7 +28,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit_id":1234567890,"data":[[]]}';
+  my $json = '{"unit":"202481588441972/1","data":[[]]}';
 
   eval {
     HiveJSO->new_via_json($json);
@@ -38,7 +38,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit_id":1234567890,"data":[2,[1,1]]}';
+  my $json = '{"unit":"202481588441972/1","data":[2,[1,1]]}';
 
   eval {
     HiveJSO->new_via_json($json);

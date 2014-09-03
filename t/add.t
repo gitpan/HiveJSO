@@ -5,7 +5,7 @@ use Test::More;
 use HiveJSO;
 
 {
-  my $json = '{"unit_id":1234567890,"ok":1}';
+  my $json = '{"unit":"1234567890/0","ok":1}';
 
   my $orig = HiveJSO->new_via_json($json);
   my $obj = $orig->add(
@@ -15,10 +15,14 @@ use HiveJSO;
   isa_ok($obj,'HiveJSO','object');
   ok(!$orig->has_timestamp,'orig has no timestamp');
   ok(!$orig->has_checksum,'orig has no checksum');
+  is($orig->unit,"1234567890/0",'orig proper Unit');
   is($orig->unit_id,1234567890,'orig proper Unit ID');
+  is($orig->id_source,0,'orig proper ID Source');
   isnt($obj,$orig,'object from add is not the original one');
   ok(!$obj->has_checksum,'new obj has no checksum');
-  is($obj->unit_id,1234567890,'Proper Unit ID');
+  is($obj->unit,"1234567890/0",'Proper Unit');
+  is($obj->unit_id,1234567890,'orig proper Unit ID');
+  is($obj->id_source,0,'orig proper ID Source');
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok($obj->has_timestamp,'has timestamp');
@@ -26,7 +30,7 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit_id":1234567890,"ok":1,"checksum":3689190051}';
+  my $json = '{"unit":"1234567890/0","ok":1,"checksum":650973972}';
 
   my $orig = HiveJSO->new_via_json($json);
   my $obj = $orig->add_short(
@@ -38,8 +42,10 @@ use HiveJSO;
   ok($orig->has_checksum,'orig has checksum');
   isnt($obj,$orig,'object from add is not the original one');
   ok($obj->has_checksum,'new obj has checksum');
-  is($obj->checksum,'2315007736','new obj checksum is correct');
-  is($obj->unit_id,1234567890,'Proper Unit ID');
+  is($obj->checksum,'1358463339','new obj checksum is correct');
+  is($obj->unit,"1234567890/0",'Proper Unit ID');
+  is($obj->unit_id,1234567890,'orig proper Unit ID');
+  is($obj->id_source,0,'orig proper ID Source');
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok($obj->has_timestamp,'has timestamp');

@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.008';
+$HiveJSO::VERSION = '0.009';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -28,7 +28,7 @@ our %short_attributes = qw(
   s    sources
   t    timestamp
   tz   timestamp_timezone
-  u    unit_id
+  u    unit
   w    software
   x    error_code
   xt   error
@@ -43,12 +43,12 @@ our @attributes = sort {
   $a cmp $b
 } ( @long_attributes, values %short_attributes );
 
-has [grep { $_ ne 'unit_id' } @attributes] => (
+has [grep { $_ ne 'unit' } @attributes] => (
   is => 'ro',
   predicate => 1,
 );
 
-has unit_id => (
+has unit => (
   is => 'ro',
   required => 1,
 );
@@ -57,6 +57,32 @@ sub new_via_json {
   my ( $class, $json ) = @_;
   my %obj = %{decode_json($json)};
   return $class->new( %obj, original_json => $json );
+}
+
+has unit_id => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_unit_id {
+  my ( $self ) = @_;
+  my @unit_parts = split('/',$self->unit);
+  my $id_source = pop @unit_parts;
+  my $unit_id = pop @unit_parts;
+  return $unit_id+0;
+}
+
+has id_source => (
+  is => 'lazy',
+  init_arg => undef,
+);
+
+sub _build_id_source {
+  my ( $self ) = @_;
+  my @unit_parts = split('/',$self->unit);
+  my $id_source = pop @unit_parts;
+  my $unit_id = pop @unit_parts;
+  return $id_source+0;
 }
 
 has original_json => (
@@ -106,7 +132,7 @@ sub BUILDARGS {
   my $checksum = delete $orig{c} || delete $orig{checksum};
 
   #
-  # we need at least 2 attributes without checksum (unit_id and one other)
+  # we need at least 2 attributes without checksum (unit and one other)
   #
   if (keys %orig < 2) {
     croak __PACKAGE__." we need more attributes for a valid HiveJSO";
@@ -204,11 +230,11 @@ has hivejso_data => (
 sub _build_hivejso_data {
   my ( $self ) = @_;
   return {
-    unit_id => $self->unit_id,
+    unit => $self->unit,
     (map {
       $self->can('has_'.$_)->($self) ? ( $_ => $self->$_ ) : ()
     } grep {
-      $_ ne 'unit_id' && $_ ne 'checksum' && $_ ne 'c'
+      $_ ne 'unit' && $_ ne 'checksum' && $_ ne 'c'
     } @attributes),
   };
 }
@@ -221,11 +247,11 @@ has hivejso_data_short => (
 sub _build_hivejso_data_short {
   my ( $self ) = @_;
   my %short_data = (
-    u => $self->unit_id,
+    u => $self->unit,
     (map {
       $self->can('has_'.$_)->($self) ? ( $_ => $self->$_ ) : ()
     } grep {
-      $_ ne 'unit_id' && $_ ne 'checksum' && $_ ne 'c'
+      $_ ne 'unit' && $_ ne 'checksum' && $_ ne 'c'
     } @attributes),
   );
   for my $k (keys %short_attributes) {
@@ -367,7 +393,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.008
+version 0.009
 
 =head1 SYNOPSIS
 
