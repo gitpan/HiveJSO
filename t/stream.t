@@ -18,7 +18,7 @@ use HiveJSO;
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
   is($post,'{"unit":"2024815884','Garbage after object');
 }
@@ -39,13 +39,13 @@ use HiveJSO;
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
   is($obj2->unit,"202481588441972/1",'Proper Unit ID');
   ok($obj2->has_ok,'Has an ok attribute');
   is($obj2->ok,1,'ok value is 1');
   ok(!$obj2->has_timestamp,'has no timestamp');
-  ok(!$obj2->has_product_id,'has no product_id');
+  ok(!$obj2->has_product,'has no product');
   ok(!$obj2->has_error_code,'has no error_code');
   is($post,'{"unit":"2024815884','Garbage after object');
 
@@ -59,7 +59,7 @@ use HiveJSO;
   ok($seek_obj->has_ok,'Has an ok attribute');
   is($seek_obj->ok,1,'ok value is 1');
   ok(!$seek_obj->has_timestamp,'has no timestamp');
-  ok(!$seek_obj->has_product_id,'has no product_id');
+  ok(!$seek_obj->has_product,'has no product');
   ok(!$seek_obj->has_error_code,'has no error_code');
   is($seek_post,'{"unit":"202481588441972/1","ok":1}{"unit":"2024815884','Garbage after object');
 
@@ -73,7 +73,7 @@ use HiveJSO;
   ok($second_seek_obj->has_ok,'Has an ok attribute');
   is($second_seek_obj->ok,1,'ok value is 1');
   ok(!$second_seek_obj->has_timestamp,'has no timestamp');
-  ok(!$second_seek_obj->has_product_id,'has no product_id');
+  ok(!$second_seek_obj->has_product,'has no product');
   ok(!$second_seek_obj->has_error_code,'has no error_code');
   is($second_seek_post,'{"unit":"2024815884','Garbage after object');
 
@@ -99,7 +99,7 @@ use HiveJSO;
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
   is($obj2->unit,"202481588441972/1",'Proper Unit');
   is($obj2->unit_id,202481588441972,'Proper Unit ID');
@@ -107,7 +107,7 @@ use HiveJSO;
   ok($obj2->has_ok,'Has an ok attribute');
   is($obj2->ok,1,'ok value is 1');
   ok(!$obj2->has_timestamp,'has no timestamp');
-  ok(!$obj2->has_product_id,'has no product_id');
+  ok(!$obj2->has_product,'has no product');
   ok(!$obj2->has_error_code,'has no error_code');
 }
 

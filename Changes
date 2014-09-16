@@ -1,10 +1,22 @@
 ==================================================
-Changes from 1740-11-19 00:00:00 +0000 to present.
+Changes from 1740-12-02 00:00:00 +0000 to present.
 ==================================================
 
 ------------------------------------------
-version 0.010 at 2014-09-03 23:21:01 +0000
+version 0.011 at 2014-09-16 15:20:03 +0000
 ------------------------------------------
+
+  Change: efd7946683e9a0ce392cba7d594671cee24612dc
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-09-16 17:19:55 +0000
+
+    Fixed tests 
+
+  Change: 4f23cdbd668242d430b6d17c04a1c127041a4d2a
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-09-16 17:14:48 +0000
+
+    Added new changes for the HiveJSO protocol 
 
   Change: 2d6f7a9a27d204f81b47a70d0eecc0f116bd5e23
   Author: Torsten Raudssus <torsten@raudss.us>

@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.010';
+$HiveJSO::VERSION = '0.011';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -19,10 +19,10 @@ our %short_attributes = qw(
   mac  manufacturer_country
   n    units
   o    command
-  p    product_id
-  pr   product
-  prw  product_web
-  prt  product_timestamp
+  p    product
+  pn   product_name
+  pw   product_web
+  pt   product_timestamp
   q    supports
   r    ranges
   s    sources
@@ -393,7 +393,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 

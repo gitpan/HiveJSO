@@ -13,7 +13,7 @@ use HiveJSO;
   is_deeply($obj->data,[[1,1],[2,2]],'Proper data');
   ok(!$obj->has_ok,'Has no ok attribute');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
 }
 

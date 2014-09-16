@@ -18,7 +18,7 @@ use JSON::MaybeXS;
   is($obj->ok,1,'ok value is 1');
   is($obj->original_json,'{"unit":"202481588441972/1","ok":1}','correct original_json');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
 }
 
@@ -33,7 +33,7 @@ use JSON::MaybeXS;
   is($obj->ok,1,'ok value is 1');
   ok(!$obj->has_original_json,'has not original json');
   ok(!$obj->has_timestamp,'has no timestamp');
-  ok(!$obj->has_product_id,'has no product_id');
+  ok(!$obj->has_product,'has no product');
   ok(!$obj->has_error_code,'has no error_code');
   is_deeply(decode_json($obj->hivejso_short),{
     ok => 1,
