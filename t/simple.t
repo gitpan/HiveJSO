@@ -12,8 +12,6 @@ use JSON::MaybeXS;
 
   isa_ok($obj,'HiveJSO','object');
   is($obj->unit,"202481588441972/1",'Proper Unit');
-  is($obj->unit_id,202481588441972,'orig proper Unit ID');
-  is($obj->id_source,1,'orig proper ID Source');
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   is($obj->original_json,'{"unit":"202481588441972/1","ok":1}','correct original_json');
@@ -27,8 +25,6 @@ use JSON::MaybeXS;
 
   isa_ok($obj,'HiveJSO','object');
   is($obj->unit,"202481588441972/1",'Proper Unit');
-  is($obj->unit_id,202481588441972,'orig proper Unit ID');
-  is($obj->id_source,1,'orig proper ID Source');
   ok($obj->has_ok,'Has an ok attribute');
   is($obj->ok,1,'ok value is 1');
   ok(!$obj->has_original_json,'has not original json');

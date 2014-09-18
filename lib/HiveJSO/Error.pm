@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::Error::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Error for malformed objects
-$HiveJSO::Error::VERSION = '0.011';
+$HiveJSO::Error::VERSION = '0.012';
 use Moo;
 
 has garbage => (
@@ -28,7 +28,7 @@ HiveJSO::Error - HiveJSO Error for malformed objects
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SUPPORT
 

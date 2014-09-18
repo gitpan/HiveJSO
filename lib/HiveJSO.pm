@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.011';
+$HiveJSO::VERSION = '0.012';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -57,32 +57,6 @@ sub new_via_json {
   my ( $class, $json ) = @_;
   my %obj = %{decode_json($json)};
   return $class->new( %obj, original_json => $json );
-}
-
-has unit_id => (
-  is => 'lazy',
-  init_arg => undef,
-);
-
-sub _build_unit_id {
-  my ( $self ) = @_;
-  my @unit_parts = split('/',$self->unit);
-  my $id_source = pop @unit_parts;
-  my $unit_id = pop @unit_parts;
-  return $unit_id+0;
-}
-
-has id_source => (
-  is => 'lazy',
-  init_arg => undef,
-);
-
-sub _build_id_source {
-  my ( $self ) = @_;
-  my @unit_parts = split('/',$self->unit);
-  my $id_source = pop @unit_parts;
-  my $unit_id = pop @unit_parts;
-  return $id_source+0;
 }
 
 has original_json => (
@@ -393,7 +367,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.011
+version 0.012
 
 =head1 SYNOPSIS
 
