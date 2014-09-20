@@ -12,6 +12,7 @@ lib/HiveJSO.pm
 lib/HiveJSO/Error.pm
 t/add.t
 t/checksum.t
+t/command.t
 t/data.t
 t/load.t
 t/release-pod-syntax.t

@@ -1,10 +1,16 @@
 ==================================================
-Changes from 1740-12-04 00:00:00 +0000 to present.
+Changes from 1740-12-06 00:00:00 +0000 to present.
 ==================================================
 
 ------------------------------------------
-version 0.012 at 2014-09-18 16:16:31 +0000
+version 0.013 at 2014-09-20 01:30:43 +0000
 ------------------------------------------
+
+  Change: cfff0be2d431ed8e2a7c6a5c62e7c025726829c2
+  Author: Torsten Raudssus <torsten@raudss.us>
+  Date : 2014-09-20 03:30:29 +0000
+
+    added command_args and command_cmd 
 
   Change: cd6ff35b9c9df95704aa3a4b74e8c46351980bd1
   Author: Torsten Raudssus <torsten@raudss.us>

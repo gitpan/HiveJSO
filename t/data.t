@@ -18,16 +18,6 @@ use HiveJSO;
 }
 
 {
-  my $json = '{"unit":"202481588441972/1","data":[[0,1]]}';
-
-  eval {
-    HiveJSO->new_via_json($json);
-  };
-
-  like($@,qr/first value in array inside 'data' array must be positive integer/,"first value in array inside 'data' array must be positive integer");
-}
-
-{
   my $json = '{"unit":"202481588441972/1","data":[[]]}';
 
   eval {

@@ -3,7 +3,7 @@ BEGIN {
   $HiveJSO::AUTHORITY = 'cpan:GETTY';
 }
 # ABSTRACT: HiveJSO Perl Implementation
-$HiveJSO::VERSION = '0.012';
+$HiveJSO::VERSION = '0.013';
 use Moo;
 use JSON::MaybeXS;
 use HiveJSO::Error;
@@ -52,6 +52,29 @@ has unit => (
   is => 'ro',
   required => 1,
 );
+
+has command_cmd => (
+  is => 'lazy',
+);
+sub has_command_cmd { $_[0]->has_command }
+sub _build_command_cmd {
+  my ( $self ) = @_;
+  my ( $cmd ) = ref $self->command eq 'ARRAY'
+    ? @{$self->command} : $self->command;
+  return $cmd;
+}
+
+sub command_args { @{$_[0]->command_args_ref} }
+has command_args_ref => (
+  is => 'lazy',
+);
+sub has_command_args { scalar ( $_[0]->command_args ) }
+sub _build_command_args_ref {
+  my ( $self ) = @_;
+  return [] unless ref $self->command eq 'ARRAY';
+  my ( undef, @args ) = @{$self->command};
+  return [ @args ];
+}
 
 sub new_via_json {
   my ( $class, $json ) = @_;
@@ -127,7 +150,6 @@ sub BUILDARGS {
     for my $data_set (@{$attr{data}}) {
       croak __PACKAGE__." values inside the 'data' array must be arrays" unless ref $data_set eq 'ARRAY';
       croak __PACKAGE__." array inside 'data' array needs at least one value" unless scalar @{$data_set};
-      croak __PACKAGE__." first value in array inside 'data' array must be positive integer above 0" unless $data_set->[0] > 0;
     }
   }
 
@@ -367,7 +389,7 @@ HiveJSO - HiveJSO Perl Implementation
 
 =head1 VERSION
 
-version 0.012
+version 0.013
 
 =head1 SYNOPSIS
 
